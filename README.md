@@ -2,10 +2,10 @@
 
 One button drops you on a random moment across Earth's 4.54 billion years. A
 proportional geological timeline shows where you landed, and a short scene,
-written ahead of time by Claude from a fixed set of real facts for that interval,
-places you there. It is an imagined moment, never an invented fact: the model is
-handed the ground truth and asked to render it, so there are no hallucinated
-statistics or citations to get wrong.
+composed ahead of time from a fixed set of real facts for that interval, places
+you there. It is an imagined moment, never an invented fact: a scene only ever
+recombines the ground truth, so there are no hallucinated statistics or citations
+to get wrong.
 
 Runtime is static. The g7 container serves two JSON files and an HTML page and
 calls no model, so there is no API key on the box and nothing to rate-limit but
@@ -25,9 +25,26 @@ bandwidth.
 
 ## Build the pool
 
-The only step that needs an Anthropic key. It runs offline and never ships to
-g7. Re-running tops each interval's bag up to the target rather than starting
-over.
+`public/scenes.json` ships empty and the site falls back to seed scenes, so
+building the pool is optional: it fills each interval's bag with more variety.
+Both generators run offline, never ship to g7, and top each bag up to
+`--per-interval` rather than starting over.
+
+### Keyless (default, free)
+
+No API key, no model, no network. Each scene is sampled from that interval's
+fact bank in `build/beats.json`, so every sentence is a hand-written ground-truth
+fact and nothing is invented. Deterministic: the same facts and count rebuild
+the same pool.
+
+```
+python build/build_pool_local.py --per-interval 80
+```
+
+### With Claude (optional)
+
+Writes each scene with Haiku from the same ground truth, a little more varied
+than the templates.
 
 ```
 python -m venv .venv && . .venv/bin/activate     # or .venv\Scripts\activate on Windows
@@ -36,8 +53,8 @@ ANTHROPIC_API_KEY=sk-... python build/build_pool.py --per-interval 80
 ```
 
 `--per-interval 80` across 18 intervals is ~1,440 scenes on Haiku, roughly a few
-tens of cents one time. Commit the resulting `public/scenes.json` so the image
-builds and deploys without a key.
+tens of cents once. Either way, commit the resulting `public/scenes.json` so the
+image builds and deploys without a key.
 
 ## Run locally
 
@@ -73,8 +90,10 @@ public/
   intervals.json     source of truth (facts, weights, accents, seeds)
   scenes.json        generated pool (commit once built)
 build/
-  build_pool.py      offline generator (needs a key)
-  prompt.py          the shared scene prompt and model id
+  build_pool_local.py  keyless generator (default, samples beats.json)
+  beats.json           fact banks for the keyless generator
+  build_pool.py        offline generator using Claude (needs a key)
+  prompt.py            the shared scene prompt and model id
   requirements.txt
 deploy/
   nginx.conf         non-root, read-only, listens on 8080
