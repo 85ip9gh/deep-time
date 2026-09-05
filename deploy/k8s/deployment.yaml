@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deep-time
+  namespace: apps
+  labels:
+    app.kubernetes.io/name: deep-time
+  annotations:
+    # Same two checkov suppressions as the other tenants, same reason: the image
+    # is built on the node and imported into containerd, so there is no registry.
+    checkov.io/skip1: CKV_K8S_15=2026-09-04 imagePullPolicy Always makes this pod unschedulable, not more current. With no registry there is nothing to pull, so the kubelet fails with ErrImagePull on every start. Revisit if these images are pushed to a registry.
+    checkov.io/skip2: CKV_K8S_43=2026-09-04 A digest pin defends against a mutable tag in a registry someone else can write to. This tag is produced by docker build on the node and imported locally, so there is no publication step to race, and pinning would mean editing this file on every rebuild. Revisit alongside CKV_K8S_15.
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: deep-time
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: deep-time
+    spec:
+      # Nothing here talks to the API server.
+      automountServiceAccountToken: false
+
+      securityContext:
+        runAsNonRoot: true
+        # A uid above 10000 cannot collide with a real account on the node if the
+        # container ever escapes its user namespace. Everything served is
+        # root-owned and world-readable, so this uid need not match the image's.
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: deep-time
+          # Built on the node, imported into containerd. IfNotPresent because
+          # Always would make this unschedulable with no registry to pull from.
+          image: deep-time:g7
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          resources:
+            requests:
+              cpu: 10m
+              memory: 24Mi
+            limits:
+              cpu: 250m
+              memory: 64Mi
+
+          # The site is static, so liveness and readiness are the same question:
+          # is nginx answering. /healthz returns 200 without touching the page.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          volumeMounts:
+            # Read-only root filesystem, so nginx's pid file and temp paths need
+            # a writable mount handed to them. nginx.conf keeps all of them here.
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 16Mi

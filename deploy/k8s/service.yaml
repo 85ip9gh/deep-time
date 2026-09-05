@@ -1,0 +1,18 @@
+# ClusterIP, so the only route in is Traefik. Nothing on the LAN or the tailnet
+# reaches this service directly.
+apiVersion: v1
+kind: Service
+metadata:
+  name: deep-time
+  namespace: apps
+  labels:
+    app.kubernetes.io/name: deep-time
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: deep-time
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP

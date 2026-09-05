@@ -1,0 +1,10 @@
+build/
+deploy/k8s/
+.git/
+.gitignore
+README.md
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env

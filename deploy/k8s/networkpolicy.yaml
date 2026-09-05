@@ -1,0 +1,58 @@
+# Without this, every pod on the cluster can reach this one on any port, which on
+# a single-node box hosting several public sites is the whole blast radius. k3s
+# runs the kube-router policy controller unless --disable-network-policy is
+# passed, and it is not, so this is enforced rather than decorative.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deep-time
+  namespace: apps
+  labels:
+    app.kubernetes.io/name: deep-time
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: deep-time
+  policyTypes:
+    - Ingress
+    - Egress
+
+  ingress:
+    # Traefik is the only thing that should open a connection to this pod.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+
+        # The kubelet's httpGet probes are not Traefik and not a pod: they leave
+        # the host and arrive over the flannel bridge. A policy naming only
+        # Traefik would pass a dry run, then restart the container every probe
+        # cycle. 10.42.0.1 is cni0; the node address is listed so the rule
+        # survives a routing change.
+        - ipBlock:
+            cidr: 10.42.0.1/32
+        - ipBlock:
+            cidr: 192.168.2.49/32
+      ports:
+        - protocol: TCP
+          port: 8080
+
+  egress:
+    # nginx resolves nothing and calls nothing here. DNS is allowed anyway
+    # because a process that cannot resolve fails in ways that read as anything
+    # but a firewall rule, and this is the smallest allowance that avoids that.
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
