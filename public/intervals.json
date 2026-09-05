@@ -1,0 +1,203 @@
+[
+  {
+    "id": "hadean", "name": "Hadean", "eon": "Hadean Eon",
+    "startMa": 4540, "endMa": 4030, "weight": 6, "accent": "#e8552a",
+    "facts": {
+      "sky": "a huge, close Moon filling much of the sky, streaked by meteors",
+      "air": "no free oxygen, only carbon dioxide, nitrogen, water vapour and volcanic gas",
+      "climate": "infernal, cooling from a global magma ocean",
+      "sea": "the first oceans just condensing onto black basalt, boiling near vents",
+      "land": "young, unstable crust, endless volcanism and lava plains",
+      "life": "none, at most the first prebiotic chemistry in hot pools"
+    },
+    "seed": "You stand on black basalt still warm underfoot, and the Moon hangs enormous and near, close enough to fill a third of the sky. There is no life, no oxygen, only steam, the reek of sulphur, and an ocean just beginning to condense out of a scalding sky."
+  },
+  {
+    "id": "archean", "name": "Archean", "eon": "Archean Eon",
+    "startMa": 4030, "endMa": 2500, "weight": 10, "accent": "#d98a3d",
+    "facts": {
+      "sky": "an orange, methane-hazy sky under a Sun that burns noticeably fainter",
+      "air": "no oxygen, rich in methane, carbon dioxide and nitrogen",
+      "climate": "warm oceans despite the dim young Sun",
+      "sea": "green, iron-rich seas covering nearly the whole planet",
+      "land": "small grey continents beginning to assemble, volcanic islands",
+      "life": "single-celled microbes and stromatolites, layered mounds built by microbial mats; cyanobacteria appear late"
+    },
+    "seed": "An orange methane haze softens a Sun that burns fainter than you know it. Green iron-rich seas stretch to every horizon, broken only by low volcanic islands and slick domes of microbial rock, the stromatolites, the only architecture on Earth."
+  },
+  {
+    "id": "paleoprot", "name": "Paleoproterozoic", "eon": "Proterozoic Eon",
+    "startMa": 2500, "endMa": 1600, "weight": 7, "accent": "#b5603a",
+    "facts": {
+      "air": "oxygen appearing for the first time in the Great Oxidation Event, poisoning the old anaerobic world",
+      "climate": "the Huronian glaciation, one of the earliest global ice ages",
+      "sea": "oceans rusting, laying down banded iron formations in red and grey",
+      "land": "the first large, stable continents",
+      "life": "microbes, and the first eukaryotic cells with a nucleus"
+    },
+    "seed": "The air itself is changing: cyanobacteria have begun exhaling oxygen, and it is rusting the oceans, laying down iron in banded red and grey. Somewhere in this poisoning of the old anaerobic world, the first cells with a nucleus are quietly assembling."
+  },
+  {
+    "id": "mesoprot", "name": "Mesoproterozoic", "eon": "Proterozoic Eon",
+    "startMa": 1600, "endMa": 1000, "weight": 5, "accent": "#9aa03e",
+    "facts": {
+      "air": "low oxygen, high carbon dioxide",
+      "climate": "unusually stable and warm, the so-called boring billion",
+      "sea": "green to purple microbial oceans, sulphurous in places",
+      "land": "the supercontinents Columbia and then Rodinia, barren red rock",
+      "life": "eukaryotes diversifying, the first sexual reproduction, microbial mats everywhere, no animals"
+    },
+    "seed": "Nothing much happens here, and that is the wonder of it, a billion years of warm, stable, sulphurous seas. Microbial mats carpet the shallows, the supercontinent broods under a pale sky, and no animal has ever moved."
+  },
+  {
+    "id": "neoprot", "name": "Neoproterozoic", "eon": "Proterozoic Eon",
+    "startMa": 1000, "endMa": 541, "weight": 7, "accent": "#4aa8a0",
+    "facts": {
+      "air": "oxygen rising toward levels that can support animals",
+      "climate": "the Cryogenian Snowball Earth, ice reaching the equator, then a thaw",
+      "sea": "under ice, then teeming Ediacaran seafloors",
+      "land": "the supercontinent Rodinia breaking apart",
+      "life": "the first large multicellular life, the soft Ediacaran fauna of fronds, discs and quilted forms"
+    },
+    "seed": "The whole planet has been ice, white to the equator, and now it thaws into strange gardens. On the seafloor the Ediacarans wave: fronds and quilted discs and ribbed forms, the first large life, soft and mouthless and utterly unlike anything that will follow."
+  },
+  {
+    "id": "cambrian", "name": "Cambrian", "eon": "Phanerozoic Eon",
+    "startMa": 541, "endMa": 485, "weight": 6, "accent": "#5b8fd0",
+    "facts": {
+      "air": "oxygen approaching modern levels",
+      "climate": "warm, with high sea levels",
+      "sea": "the Cambrian Explosion: trilobites, the metre-long predator Anomalocaris, and the first animals with eyes, shells and limbs",
+      "land": "still bare rock, no life above the tideline"
+    },
+    "seed": "The shallow sea seethes with invention. Trilobites plough the mud, the metre-long Anomalocaris sweeps the water with its grasping arms, and eyes, brand new in the world, are everywhere. The land above the tideline is still bare stone."
+  },
+  {
+    "id": "ordovician", "name": "Ordovician", "eon": "Phanerozoic Eon",
+    "startMa": 485, "endMa": 444, "weight": 4, "accent": "#3fb0c9",
+    "facts": {
+      "climate": "warm, ending in a sudden severe ice age",
+      "sea": "vast shallow seas, straight-shelled nautiloids, and the first coral reefs",
+      "land": "only a green film of the earliest mosses and liverworts, hugging wet ground",
+      "life": "an explosion of marine diversity, then the end-Ordovician mass extinction"
+    },
+    "seed": "Over reefs built by the first corals, straight-shelled nautiloids hunt in warm shallow seas. On the naked land, only a green film of the earliest mosses and liverworts has gained a foothold, hugging the wet edges of the world."
+  },
+  {
+    "id": "silurian", "name": "Silurian", "eon": "Phanerozoic Eon",
+    "startMa": 444, "endMa": 419, "weight": 3, "accent": "#6fbf59",
+    "facts": {
+      "climate": "warm and stable",
+      "sea": "jawed fish and giant sea scorpions, the eurypterids, over reefs",
+      "land": "the first vascular plants, low leafless green stems, with the first millipedes and arachnids",
+      "life": "life gaining a real foothold on land for the first time"
+    },
+    "seed": "The first real gardens climb the shore: low forests of leafless green stems, the first vascular plants, with millipedes and early arachnids threading between them. In the sea, jawed fish and giant sea scorpions have begun to rule."
+  },
+  {
+    "id": "devonian", "name": "Devonian", "eon": "Phanerozoic Eon",
+    "startMa": 419, "endMa": 359, "weight": 5, "accent": "#4f9e46",
+    "facts": {
+      "climate": "warm",
+      "sea": "the Age of Fishes, thick with armoured giants and the first sharks",
+      "land": "the first true forests, and the first four-limbed tetrapods hauling out of the water",
+      "life": "vertebrates making the move onto land, ending in the Late Devonian extinctions"
+    },
+    "seed": "This is the Age of Fishes, the seas thick with armoured giants and the first sharks. On land the first true forests rise, and in a muddy shallow something with four limbs and lungs is hauling itself, for the first time, out of the water."
+  },
+  {
+    "id": "carbon", "name": "Carboniferous", "eon": "Phanerozoic Eon",
+    "startMa": 359, "endMa": 299, "weight": 5, "accent": "#3f7a3a",
+    "facts": {
+      "air": "oxygen near its all-time peak, fuelling giant insects",
+      "climate": "hot and humid",
+      "land": "immense coal-forming swamp forests of tree-ferns and clubmosses, dragonflies the size of hawks, millipedes longer than a person",
+      "life": "the first reptiles and the amniote egg appear"
+    },
+    "seed": "You breathe air richer in oxygen than any human ever will, and the swamp answers with giants: dragonflies the size of hawks, millipedes longer than you are tall. Endless coal forests of tree-ferns and clubmosses drip in the heat."
+  },
+  {
+    "id": "permian", "name": "Permian", "eon": "Phanerozoic Eon",
+    "startMa": 299, "endMa": 252, "weight": 5, "accent": "#c98a3e",
+    "facts": {
+      "climate": "hot and dry across a vast continental interior",
+      "land": "the supercontinent Pangaea, red deserts running for thousands of miles, sail-backed synapsids that are distant mammal ancestors",
+      "life": "ending in the Great Dying, Earth's largest mass extinction"
+    },
+    "seed": "Pangaea, one vast continent, bakes under a hard sun, its red interior a desert that runs for thousands of miles. Sail-backed synapsids, the distant ancestors of mammals, move through the dry margins, unaware that the greatest dying in Earth's history is coming."
+  },
+  {
+    "id": "triassic", "name": "Triassic", "eon": "Phanerozoic Eon",
+    "startMa": 252, "endMa": 201, "weight": 4, "accent": "#cf6f43",
+    "facts": {
+      "climate": "hot and dry on a recovering, single supercontinent",
+      "sea": "ichthyosaurs and ammonites",
+      "land": "the first dinosaurs and the first small mammals, both newly appeared",
+      "life": "a world rebuilding after near-total death"
+    },
+    "seed": "The world is recovering from near-total death, hot and dry across a single supercontinent. Among the survivors, two quiet newcomers have appeared, the first small dinosaurs and the first tiny mammals, both waiting for a world to inherit."
+  },
+  {
+    "id": "jurassic", "name": "Jurassic", "eon": "Phanerozoic Eon",
+    "startMa": 201, "endMa": 145, "weight": 6, "accent": "#58a24e",
+    "facts": {
+      "air": "warm, high carbon dioxide, no polar ice",
+      "climate": "lush and green to the poles",
+      "sea": "plesiosaurs and ichthyosaurs, high sea levels",
+      "land": "giant sauropods and Allosaurus among tree-ferns and cycads, and the very first birds"
+    },
+    "seed": "Warm, wet, and green to the poles, the land shudders under sauropods the length of ships. Allosaurus hunts beneath tree-ferns and cycads, and overhead, on leathery feathered wings, the very first birds cross a sky without ice at either end of the world."
+  },
+  {
+    "id": "cretaceous", "name": "Cretaceous", "eon": "Phanerozoic Eon",
+    "startMa": 145, "endMa": 66, "weight": 7, "accent": "#d16f86",
+    "facts": {
+      "climate": "warm, with high inland seas",
+      "sea": "mosasaurs and ammonites in warm shallow seas",
+      "land": "Tyrannosaurus and Triceratops, and the first flowering plants and bees spreading scent across the world",
+      "life": "ending abruptly with the Chicxulub asteroid impact and the extinction of the non-bird dinosaurs"
+    },
+    "seed": "Flowers exist now, and bees, scenting a world that has never smelled of blossom before. Tyrannosaurus moves through it, and Triceratops, and out beyond the warm inland seas nothing yet suggests the asteroid already falling toward the future."
+  },
+  {
+    "id": "paleogene", "name": "Paleogene", "eon": "Phanerozoic Eon",
+    "startMa": 66, "endMa": 23, "weight": 4, "accent": "#c07a45",
+    "facts": {
+      "climate": "a hothouse world with a sharp warm spike, cooling later",
+      "sea": "the first whales returning to the sea",
+      "land": "mammals radiating into the empty world, giant flightless birds, and the first primates in the branches",
+      "life": "life reorganising after the death of the dinosaurs"
+    },
+    "seed": "The dinosaurs are gone, and into the silence the mammals pour: small at first, then bold, filling forests and plains and, astonishingly, returning to the sea as the first whales. Among the branches, something small and big-eyed, an early primate, watches."
+  },
+  {
+    "id": "neogene", "name": "Neogene", "eon": "Phanerozoic Eon",
+    "startMa": 23, "endMa": 2.58, "weight": 4, "accent": "#c8a24a",
+    "facts": {
+      "climate": "cooling and drying",
+      "land": "grasslands spreading across the world, grazing herds, apes, and the first upright-walking hominins in the African woodlands",
+      "life": "the stage being set for humanity"
+    },
+    "seed": "Grass has conquered the world, and with it come the grazers and the herds. In the drying African woodlands an ape has come down from the trees and begun, on two legs, to walk out across the open ground toward everything that comes next."
+  },
+  {
+    "id": "pleistocene", "name": "Pleistocene", "eon": "Quaternary Period",
+    "startMa": 2.58, "endMa": 0.0117, "weight": 5, "accent": "#7fb8d6",
+    "facts": {
+      "climate": "repeated ice ages, ice sheets advancing and retreating",
+      "land": "mammoths, woolly rhinos and sabre-toothed cats across cold tundra",
+      "life": "Neanderthals, and then Homo sapiens, watching the herds from the edge of the ice"
+    },
+    "seed": "Ice sheets grind south and pull back and grind south again. Mammoths and woolly rhinos breathe steam across the tundra, sabre-tooths shadow the herds, and by firelight at the edge of the ice, people, both Neanderthal and newly arrived Homo sapiens, watch the dark."
+  },
+  {
+    "id": "holocene", "name": "Holocene", "eon": "Quaternary Period",
+    "startMa": 0.0117, "endMa": 0, "weight": 2, "accent": "#5bb06a",
+    "facts": {
+      "climate": "a brief, unusually stable warm interglacial",
+      "land": "the first fields and cities, every language, war and song, the whole of recorded history",
+      "life": "humanity everywhere, the age you were born into"
+    },
+    "seed": "The ice has loosened its grip, and in this brief, unusual warmth everything you call history happens at once: the first fields, the first cities, every language and war and song. It is a thin, calm sliver of time, and you have always lived inside it."
+  }
+]

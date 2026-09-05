@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Deep Time Machine</title>
+<meta name="description" content="Land on one random moment in Earth's 4.54-billion-year history, grounded in the geological record." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Public+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" />
+<style>
+  :root {
+    /* spacing scale, 4px grid */
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+
+    --ground: #f3ede1;
+    --surface: #fbf7ee;
+    --surface-2: #ece3d1;
+    --ink: #241d13;
+    --ink-dim: #6d6150;
+    --line: #d9ceba;
+    --accent: #a8641a;
+    --accent-ink: #ffffff;
+    --era-accent: #a8641a;
+    --ribbon-h: 34px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #15100b;
+      --surface: #1d1710;
+      --surface-2: #271f15;
+      --ink: #f2e8d8;
+      --ink-dim: #b3a48d;
+      --line: #382d1f;
+      --accent: #e5a745;
+      --accent-ink: #1a1206;
+      --era-accent: #e5a745;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #15100b;
+    --surface: #1d1710;
+    --surface-2: #271f15;
+    --ink: #f2e8d8;
+    --ink-dim: #b3a48d;
+    --line: #382d1f;
+    --accent: #e5a745;
+    --accent-ink: #1a1206;
+    --era-accent: #e5a745;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  img { max-width: 100%; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    padding: clamp(18px, 4vw, 56px) var(--s4) var(--s7);
+  }
+  .wrap { width: 100%; max-width: 860px; }
+
+  .eyebrow {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 0 0 var(--s3);
+  }
+
+  .timeline { margin-bottom: clamp(30px, 6vw, 54px); }
+  .ribbon {
+    position: relative;
+    height: var(--ribbon-h);
+    display: flex;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .seg { height: 100%; }
+  .marker {
+    position: absolute;
+    top: -7px;
+    bottom: -7px;
+    width: 2px;
+    background: var(--era-accent);
+    transform: translateX(-1px);
+    transition: left 0.7s cubic-bezier(.22,.61,.36,1), background 0.5s ease;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .marker::before {
+    content: "";
+    position: absolute;
+    top: -4px; left: 50%;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--era-accent);
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 3px var(--ground);
+  }
+  .ticks {
+    position: relative;
+    height: 16px;
+    margin-top: var(--s2);
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 0.62rem;
+    color: var(--ink-dim);
+  }
+  .tick { position: absolute; top: 0; white-space: nowrap; transform: translateX(-50%); }
+  .tick.edge-l { transform: none; left: 0 !important; }
+  .tick.edge-r { transform: none; right: 0; }
+  .tick::before {
+    content: "";
+    position: absolute;
+    top: -8px; left: 50%;
+    width: 1px; height: 5px;
+    background: var(--line);
+  }
+  .tick.edge-l::before { left: 0; }
+  .tick.edge-r::before { left: auto; right: 0; }
+
+  .moment { margin-bottom: clamp(26px, 5vw, 42px); }
+  .eon-label {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--era-accent);
+    margin: 0 0 var(--s1);
+    transition: color 0.5s ease;
+  }
+  .era-name {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 8vw, 4.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 var(--s3);
+  }
+  .date-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s2) var(--s4);
+    margin-bottom: var(--s1);
+  }
+  .date {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .progress { font-size: 0.82rem; color: var(--ink-dim); }
+  .progress b { color: var(--ink); font-weight: 600; }
+
+  .scene-wrap { margin-top: clamp(20px, 4vw, 30px); }
+  .scene {
+    font-size: clamp(1.08rem, 2.4vw, 1.24rem);
+    line-height: 1.72;
+    max-width: 62ch;
+    min-height: 6.2em;
+    margin: 0;
+  }
+  .scene.enter { animation: rise 0.4s ease both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .caption {
+    margin-top: var(--s3);
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+  }
+  .caption .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--era-accent); transition: background 0.5s ease; }
+
+  .controls {
+    margin-top: clamp(26px, 5vw, 40px);
+    padding-top: clamp(22px, 4vw, 32px);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); }
+  .travel {
+    font-family: "Public Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: none;
+    border-radius: 999px;
+    padding: var(--s3) var(--s5);
+    cursor: pointer;
+    transition: transform 0.12s ease, filter 0.2s ease;
+  }
+  .travel:hover { filter: brightness(1.06); }
+  .travel:active { transform: translateY(1px) scale(0.99); }
+
+  .modes {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: var(--s1);
+    background: var(--surface);
+  }
+  .modes button {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    color: var(--ink-dim);
+    background: none;
+    border: none;
+    border-radius: 999px;
+    padding: var(--s2) var(--s3);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .modes button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); }
+
+  .link-btn {
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    color: var(--ink-dim);
+    background: none;
+    border: none;
+    padding: var(--s2) 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .link-btn:hover { color: var(--ink); }
+
+  .helper { font-size: 0.83rem; color: var(--ink-dim); max-width: 56ch; margin: 0; }
+
+  .foot {
+    margin-top: var(--s6);
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    max-width: 60ch;
+  }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="timeline">
+      <p class="eyebrow">Earth &middot; 4.54 billion years</p>
+      <div class="ribbon" id="ribbon" aria-hidden="true">
+        <div class="marker" id="marker" style="left:50%"></div>
+      </div>
+      <div class="ticks" id="ticks" aria-hidden="true"></div>
+    </div>
+
+    <div class="moment">
+      <p class="eon-label" id="eon">&nbsp;</p>
+      <h1 class="era-name" id="era">Deep Time</h1>
+      <div class="date-line">
+        <span class="date" id="date">&nbsp;</span>
+        <span class="progress" id="progress"></span>
+      </div>
+
+      <div class="scene-wrap">
+        <p class="scene" id="scene" aria-live="polite">&nbsp;</p>
+        <div class="caption"><span class="dot"></span><span id="caption">Imagined, grounded in the geological record</span></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="row">
+        <button class="travel" id="travel">Travel to another moment</button>
+        <div class="modes" role="group" aria-label="Draw weighting">
+          <button id="mode-eventful" aria-pressed="true">Eventful</button>
+          <button id="mode-true" aria-pressed="false">True to duration</button>
+        </div>
+        <button class="link-btn" id="copy">Copy link to this moment</button>
+      </div>
+      <p class="helper" id="helper"></p>
+    </div>
+
+    <p class="foot">
+      A random point in Earth's history, weighted and dropped into place. Each scene is written ahead of time by Claude from a fixed set of real geological facts for that interval, so it is an imagined moment, not an invented fact. Time is given in Ma (millions) and Ga (billions) of years ago.
+    </p>
+  </main>
+
+<script>
+  const EARTH = 4540;
+  let INTERVALS = [];
+  let POOL = {};
+  let mode = "eventful";
+  const el = (id) => document.getElementById(id);
+
+  function fmtMa(ma) {
+    if (ma >= 1000) return (ma / 1000).toFixed(2) + " Ga";
+    if (ma >= 100) return Math.round(ma) + " Ma";
+    if (ma >= 1) return ma.toFixed(1) + " Ma";
+    let years = ma * 1e6;
+    const step = years >= 1e5 ? 1e4 : years >= 1e4 ? 1e3 : 100;
+    years = Math.max(step, Math.round(years / step) * step);
+    return years.toLocaleString("en-US") + " years ago";
+  }
+
+  function markerLeft(ma) { return ((EARTH - ma) / EARTH) * 100; }
+
+  function buildRibbon() {
+    const ribbon = el("ribbon");
+    INTERVALS.forEach(function (iv) {
+      const d = document.createElement("div");
+      d.className = "seg";
+      d.style.flex = (iv.startMa - iv.endMa) / EARTH + " 0 0";
+      d.style.background = iv.accent;
+      d.style.opacity = "0.42";
+      ribbon.insertBefore(d, el("marker"));
+    });
+    const marks = [
+      { ma: 4540, label: "4.5 Ga", cls: "edge-l" },
+      { ma: 541, label: "541 Ma" },
+      { ma: 66, label: "66 Ma" },
+      { ma: 0, label: "now", cls: "edge-r" }
+    ];
+    const ticks = el("ticks");
+    marks.forEach(function (m) {
+      const t = document.createElement("div");
+      t.className = "tick" + (m.cls ? " " + m.cls : "");
+      if (!m.cls) t.style.left = markerLeft(m.ma) + "%";
+      t.textContent = m.label;
+      ticks.appendChild(t);
+    });
+  }
+
+  function pick() {
+    const w = INTERVALS.map(function (iv) {
+      return mode === "true" ? iv.startMa - iv.endMa : iv.weight;
+    });
+    const total = w.reduce(function (a, b) { return a + b; }, 0);
+    let r = Math.random() * total;
+    for (let i = 0; i < INTERVALS.length; i++) { r -= w[i]; if (r <= 0) return INTERVALS[i]; }
+    return INTERVALS[INTERVALS.length - 1];
+  }
+
+  function setScene(text, animate) {
+    const s = el("scene");
+    s.textContent = text;
+    if (animate) { s.classList.remove("enter"); void s.offsetWidth; s.classList.add("enter"); }
+  }
+
+  function render(iv, ma, text, animate) {
+    document.documentElement.style.setProperty("--era-accent", iv.accent);
+    el("eon").textContent = iv.eon;
+    el("era").textContent = "The " + iv.name;
+    el("date").textContent = fmtMa(ma);
+    const pct = ((EARTH - ma) / EARTH) * 100;
+    const shown = pct >= 99.99 ? "99.99" : pct < 1 ? pct.toFixed(2) : pct.toFixed(1);
+    const p = el("progress");
+    p.textContent = "";
+    const b = document.createElement("b");
+    b.textContent = shown + "%";
+    p.append("you are ", b, " of the way through Earth's story");
+    el("marker").style.left = markerLeft(ma) + "%";
+    setScene(text, animate);
+    try { history.replaceState(null, "", "#" + iv.id + "-" + ma.toFixed(4)); } catch (e) {}
+  }
+
+  function draw() {
+    const iv = pick();
+    const bag = POOL[iv.id] || [];
+    if (bag.length) {
+      const s = bag[Math.floor(Math.random() * bag.length)];
+      render(iv, s.ma, s.text, true);
+    } else {
+      const ma = iv.endMa + Math.random() * (iv.startMa - iv.endMa);
+      render(iv, ma, iv.seed, true);
+    }
+  }
+
+  function setMode(m) {
+    mode = m;
+    el("mode-eventful").setAttribute("aria-pressed", String(m === "eventful"));
+    el("mode-true").setAttribute("aria-pressed", String(m === "true"));
+    el("helper").textContent = m === "true"
+      ? "True to duration: nearly 88% of Earth's history was microbial, and the draw now reflects that. Most moments land deep in the Precambrian."
+      : "Draws lean toward the eventful chapters. Switch to true scale to feel how much of Earth's story was single-celled and quiet.";
+  }
+
+  function fromHash() {
+    const h = (location.hash || "").replace("#", "");
+    if (!h) return false;
+    const i = h.lastIndexOf("-");
+    if (i < 0) return false;
+    const iv = INTERVALS.find(function (x) { return x.id === h.slice(0, i); });
+    const ma = parseFloat(h.slice(i + 1));
+    if (!iv || isNaN(ma)) return false;
+    // A shared link fixes the moment, not the prose: the seed is stable and
+    // never cites a figure, so it pairs with any date without contradiction.
+    render(iv, ma, iv.seed, false);
+    return true;
+  }
+
+  function wireControls() {
+    el("travel").addEventListener("click", draw);
+    el("mode-eventful").addEventListener("click", function () { setMode("eventful"); });
+    el("mode-true").addEventListener("click", function () { setMode("true"); });
+    el("copy").addEventListener("click", function () {
+      const btn = el("copy");
+      const done = function () { btn.textContent = "Link copied"; setTimeout(function () { btn.textContent = "Copy link to this moment"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(location.href).then(done, done);
+      } else { done(); }
+    });
+  }
+
+  function fail(msg) {
+    el("era").textContent = "Out of order";
+    setScene(msg, false);
+  }
+
+  Promise.all([
+    fetch("intervals.json").then(function (r) { return r.json(); }),
+    fetch("scenes.json").then(function (r) { return r.json(); }).catch(function () { return {}; })
+  ]).then(function (res) {
+    INTERVALS = res[0];
+    POOL = res[1] || {};
+    buildRibbon();
+    setMode("eventful");
+    wireControls();
+    if (!fromHash()) draw();
+  }).catch(function () {
+    fail("The timeline could not load. Reload to try again.");
+  });
+</script>
+</body>
+</html>
