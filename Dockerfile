@@ -7,8 +7,8 @@ FROM nginx:alpine
 # the container can run as a non-root uid with a read-only root filesystem.
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 
-# Only the static site ships. The build/ generator and its key never enter the
-# image (see .dockerignore).
+# Only the static site ships: index.html, intervals.json and beats.json (see
+# .dockerignore). Scenes are generated in the browser, so no key is ever present.
 COPY public/ /usr/share/nginx/html/
 
 EXPOSE 8080
