@@ -2,59 +2,40 @@
 
 One button drops you on a random moment across Earth's 4.54 billion years. A
 proportional geological timeline shows where you landed, and a short scene,
-composed ahead of time from a fixed set of real facts for that interval, places
+composed in your browser from a fixed set of real facts for that interval, places
 you there. It is an imagined moment, never an invented fact: a scene only ever
 recombines the ground truth, so there are no hallucinated statistics or citations
 to get wrong.
 
-Runtime is static. The g7 container serves two JSON files and an HTML page and
-calls no model, so there is no API key on the box and nothing to rate-limit but
-bandwidth.
+Runtime is static and keyless. The g7 container serves an HTML page and two JSON
+files and calls no model, so there is no API key on the box and nothing to
+rate-limit but bandwidth. Scenes are generated in the browser, on demand, one per
+button press, so the variety is effectively endless.
 
 ## How it works
 
 - `public/intervals.json` is the source of truth: 18 geological intervals, each
-  with its date range, a draw weight, an accent colour, the ground-truth facts
-  used to generate scenes, and a hand-written seed scene.
-- `public/scenes.json` is the generated pool: `{ intervalId: [ { ma, text } ] }`.
-  Ships empty; the site falls back to each interval's seed until you build it.
-- The page draws an interval (weighted), then picks a random scene from that
-  interval's bag and shows the scene's own date. Two weightings: **Eventful**
-  (tilted toward the charismatic chapters) and **True to duration** (honest, so
-  most draws land in the microbial Precambrian).
+  with its date range, a draw weight, an accent colour, and a hand-written seed
+  scene.
+- `public/beats.json` is the fact base: for each interval, a bag of short
+  hand-written ground-truth facts, typed by sense (sky, air, sound, life, and so
+  on). About 200 in total.
+- `public/index.html` draws a weighted interval, picks a random date inside it,
+  then composes a scene on the spot by sampling a varied subset of that interval's
+  facts and ordering them from sky to ground to life. Every sentence is a fact
+  from `beats.json`, so nothing is invented and no two draws are quite the same.
+  If `beats.json` fails to load it falls back to the interval's seed scene.
+- Two weightings: **Eventful** (tilted toward the charismatic chapters) and
+  **True to duration** (honest, so most draws land in the microbial Precambrian).
 
-## Build the pool
+## Add or change facts
 
-`public/scenes.json` ships empty and the site falls back to seed scenes, so
-building the pool is optional: it fills each interval's bag with more variety.
-Both generators run offline, never ship to g7, and top each bag up to
-`--per-interval` rather than starting over.
-
-### Keyless (default, free)
-
-No API key, no model, no network. Each scene is sampled from that interval's
-fact bank in `build/beats.json`, so every sentence is a hand-written ground-truth
-fact and nothing is invented. Deterministic: the same facts and count rebuild
-the same pool.
-
-```
-python build/build_pool_local.py --per-interval 80
-```
-
-### With Claude (optional)
-
-Writes each scene with Haiku from the same ground truth, a little more varied
-than the templates.
-
-```
-python -m venv .venv && . .venv/bin/activate     # or .venv\Scripts\activate on Windows
-pip install -r build/requirements.txt
-ANTHROPIC_API_KEY=sk-... python build/build_pool.py --per-interval 80
-```
-
-`--per-interval 80` across 18 intervals is ~1,440 scenes on Haiku, roughly a few
-tens of cents once. Either way, commit the resulting `public/scenes.json` so the
-image builds and deploys without a key.
+Edit `public/beats.json`. Each interval maps to a list of `[type, sentence]`
+pairs, where `type` is one of sky, weather, air, smell, sound, water, land,
+ground, life, moment. Add sentences to widen an interval's variety and the
+generator picks them up with no build step. Keep every sentence a real,
+present-tense, second-person fragment of ground truth, never an invented figure,
+species, or date.
 
 ## Run locally
 
@@ -78,23 +59,17 @@ kubectl apply -f deploy/k8s/
 ```
 
 Point a DNS name at the cloudflared tunnel and set it as the host in
-`deploy/k8s/ingress.yaml` (currently `deeptime.pesanth.com`). To refresh the
-scenes, rebuild the pool, rebuild and re-import the image, and restart the
-rollout (`kubectl -n apps rollout restart deploy/deep-time`).
+`deploy/k8s/ingress.yaml` (currently `deeptime.pesanth.com`). To refresh after a
+change, rebuild and re-import the image, then restart the rollout
+(`kubectl -n apps rollout restart deploy/deep-time`).
 
 ## Layout
 
 ```
 public/
-  index.html         static site, fetches the two JSON files
-  intervals.json     source of truth (facts, weights, accents, seeds)
-  scenes.json        generated pool (commit once built)
-build/
-  build_pool_local.py  keyless generator (default, samples beats.json)
-  beats.json           fact banks for the keyless generator
-  build_pool.py        offline generator using Claude (needs a key)
-  prompt.py            the shared scene prompt and model id
-  requirements.txt
+  index.html         static site, generates scenes in the browser
+  intervals.json     source of truth (ranges, weights, accents, seeds)
+  beats.json         the fact base the generator samples
 deploy/
   nginx.conf         non-root, read-only, listens on 8080
   k8s/               namespace, deployment, service, ingress, middleware, networkpolicy
