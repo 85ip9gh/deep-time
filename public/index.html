@@ -296,16 +296,71 @@
     </div>
 
     <p class="foot">
-      A random point in Earth's history, weighted and dropped into place. Each scene is composed ahead of time from a fixed set of real geological facts for that interval, so it is an imagined moment, not an invented fact. Time is given in Ma (millions) and Ga (billions) of years ago.
+      A random point in Earth's history, weighted and dropped into place. Each scene is composed in your browser from a fixed set of real geological facts for that interval, so it is an imagined moment, not an invented fact. Time is given in Ma (millions) and Ga (billions) of years ago.
     </p>
   </main>
 
 <script>
   const EARTH = 4540;
   let INTERVALS = [];
-  let POOL = {};
+  let BEATS = {};
   let mode = "eventful";
   const el = (id) => document.getElementById(id);
+
+  const GEN_ORDER = ["sky", "weather", "air", "smell", "sound", "water", "land", "ground", "life", "moment"];
+  const GEN_AMBIANCE = ["sky", "weather", "air", "smell", "sound"];
+  const GEN_PLACE = ["water", "land", "ground"];
+  const GEN_FILL = ["life", "moment", "water", "land", "ground", "sound", "smell", "air", "weather", "sky"];
+  const GEN_OPENERS = [
+    "You open your eyes, and you are here.",
+    "You are here, and it is real.",
+    "You are standing in it.",
+    "You have arrived."
+  ];
+
+  function gchoice(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function gshuffle(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function composeScene(bank) {
+    const by = {};
+    bank.forEach(function (b) { (by[b[0]] = by[b[0]] || []).push(b[1]); });
+    const chosen = [];
+    const used = new Set();
+    function add(kind, sentence) {
+      if (!used.has(sentence)) { used.add(sentence); chosen.push([kind, sentence]); }
+    }
+    function take(kinds, count) {
+      gshuffle(kinds.filter(function (k) { return by[k]; }))
+        .slice(0, count)
+        .forEach(function (k) { add(k, gchoice(by[k])); });
+    }
+    take(GEN_AMBIANCE, gchoice([2, 3, 3]));
+    take(GEN_PLACE, gchoice([1, 2]));
+    gshuffle(by["life"] || []).slice(0, 2).forEach(function (s) { add("life", s); });
+    if (by["moment"] && Math.random() < 0.65) add("moment", gchoice(by["moment"]));
+
+    const words = function () {
+      return chosen.reduce(function (n, c) { return n + c[1].split(" ").length; }, 0);
+    };
+    let guard = 0, step = 0;
+    while (words() < 70 && guard < 60) {
+      guard++;
+      const kind = GEN_FILL[step % GEN_FILL.length]; step++;
+      const fresh = (by[kind] || []).filter(function (s) { return !used.has(s); });
+      if (fresh.length) add(kind, gchoice(fresh));
+    }
+    chosen.sort(function (a, b) { return GEN_ORDER.indexOf(a[0]) - GEN_ORDER.indexOf(b[0]); });
+    let text = chosen.map(function (c) { return c[1]; }).join(" ");
+    if (Math.random() < 0.3) text = gchoice(GEN_OPENERS) + " " + text;
+    return text;
+  }
 
   function fmtMa(ma) {
     if (ma >= 1000) return (ma / 1000).toFixed(2) + " Ga";
@@ -380,14 +435,10 @@
 
   function draw() {
     const iv = pick();
-    const bag = POOL[iv.id] || [];
-    if (bag.length) {
-      const s = bag[Math.floor(Math.random() * bag.length)];
-      render(iv, s.ma, s.text, true);
-    } else {
-      const ma = iv.endMa + Math.random() * (iv.startMa - iv.endMa);
-      render(iv, ma, iv.seed, true);
-    }
+    const ma = iv.endMa + Math.random() * (iv.startMa - iv.endMa);
+    const bank = BEATS[iv.id];
+    const text = (bank && bank.length) ? composeScene(bank) : iv.seed;
+    render(iv, ma, text, true);
   }
 
   function setMode(m) {
@@ -433,10 +484,10 @@
 
   Promise.all([
     fetch("intervals.json").then(function (r) { return r.json(); }),
-    fetch("scenes.json").then(function (r) { return r.json(); }).catch(function () { return {}; })
+    fetch("beats.json").then(function (r) { return r.json(); }).catch(function () { return {}; })
   ]).then(function (res) {
     INTERVALS = res[0];
-    POOL = res[1] || {};
+    BEATS = res[1] || {};
     buildRibbon();
     setMode("eventful");
     wireControls();
